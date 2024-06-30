@@ -20,8 +20,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
-    res.send("Hello World!");
+
+    Movie.find().then((movies) => {
+        res.render('index', {movies});
+    })
 });
+
+app.get("/create", (req, res) => {
+    res.render("add");
+})
 
 app.listen(3000, () => {
     console.log("Listening on port http://localhost:3000");

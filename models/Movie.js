@@ -32,6 +32,10 @@ const movieSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    image : {
+        type: String,
+        required: true
+    }
 });
 
 const Movie = mongoose.model('Movie', movieSchema)
