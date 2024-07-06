@@ -3,7 +3,8 @@ const app = express();
 const path = require("path");
 const mongoose = require("mongoose");
 const Movie = require("./models/Movie");
-
+const bodyParser = require("body-parser");
+let editMovie;
 mongoose
     .connect("mongodb://localhost:27017/db_movie")
     .then(() => {
@@ -16,19 +17,52 @@ mongoose
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-
     Movie.find().then((movies) => {
-        res.render('index', {movies});
-    })
+        res.render("index", { movies });
+    });
 });
 
 app.get("/create", (req, res) => {
     res.render("add");
-})
+    movie.create(req.body);
+});
+
+app.post("/movies", (req, res) => {
+    const { title, year, genre, actors, synopsis, rating, image } = req.body;
+    const newActors = actors.split(", ");
+    const insertMovie = new Movie({
+        title: title,
+        year: year,
+        genre: genre,
+        actors: newActors,
+        synopsis: synopsis,
+        rating: rating,
+        image: image,
+    });
+    insertMovie.save().then(() => {
+        res.redirect("/");
+    });
+});
+
+// render details page
+app.get("/movies/:id", (req, res) => {
+    Movie.findById(req.params.id).then((result, err) => {
+        if (result) {
+            editMovie = result;
+            res.render("details", {result})
+        } else {
+            console.log(err)
+        }
+    });
+});
+
+app.get("/edit", (req, res) => {
+    res.render("edit", { editMovie });
+});
 
 app.listen(3000, () => {
     console.log("Listening on port http://localhost:3000");
