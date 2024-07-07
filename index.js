@@ -4,6 +4,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 const Movie = require("./models/Movie");
 const bodyParser = require("body-parser");
+const methodOverride = require("method-override");
 let editMovie;
 mongoose
     .connect("mongodb://localhost:27017/db_movie")
@@ -19,6 +20,8 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(methodOverride("_method"));
 
 app.get("/", (req, res) => {
     Movie.find().then((movies) => {
@@ -63,6 +66,21 @@ app.get("/movies/:id", (req, res) => {
 app.get("/edit", (req, res) => {
     res.render("edit", { editMovie });
 });
+
+app.patch("/movies/:id", (req,res) => {
+    const {id} = req.params
+    console.log(id)
+    Movie.findByIdAndUpdate(id, req.body).then(() => {
+        res.redirect("/")
+    })
+})
+
+app.delete("/movies/:id", (req, res) => {
+    const {id} = req.params
+    Movie.findByIdAndDelete(id).then(() => {
+        res.redirect("/")
+    })
+})
 
 app.listen(3000, () => {
     console.log("Listening on port http://localhost:3000");

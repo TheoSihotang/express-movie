@@ -66,9 +66,11 @@
                                 >Back</a
                             >
                         </div>
-                        <div class="act-button">
+                        <div class="act-button d-flex flex-row">
                             <a href="/edit" class="btn btn-warning fw-bold text-white me-5">Edit</a>
-                            <a href="/delete" class="btn btn-danger fw-bold">Delete</a>
+                            <form action="/movies/<%=result._id%>?_method=DELETE" method="POST">
+                                <button class="btn btn-danger fw-bold text-white">Delete</button>
+                            </form>
                         </div>
                     </div>
                 </div>
