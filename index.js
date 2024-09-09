@@ -18,6 +18,7 @@ mongoose
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+// middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -53,13 +54,13 @@ app.post("/movies", (req, res) => {
 
 // render details page
 app.get("/movies/:id", (req, res) => {
-    Movie.findById(req.params.id).then((result, err) => {
-        if (result) {
+    Movie.findById(req.params.id).then((result) => {
             editMovie = result;
             res.render("details", {result})
-        } else {
-            console.log(err)
-        }
+    })
+    .catch((err) => {
+        res.render("error")
+        console.log(err)
     });
 });
 
@@ -69,7 +70,6 @@ app.get("/edit", (req, res) => {
 
 app.patch("/movies/:id", (req,res) => {
     const {id} = req.params
-    console.log(id)
     Movie.findByIdAndUpdate(id, req.body).then(() => {
         res.redirect("/")
     })
